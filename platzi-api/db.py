@@ -48,34 +48,43 @@ def consultar_carreras(skip, limit):
 
 
 def agregar_curso(json):
-    return str('Falta por implementar')
+    curso = consultar_curso_por_id_proyeccion(
+        json['id_curso'], proyeccion={'nombre': 1})
+    return str(db.carreras.update_one({'_id': ObjectId(json['id_carrera'])},
+                                      {'$addToSet': {'cursos': curso}}).modified_count)
 
 
 def borrar_curso_de_carrera(json):
-    return str('Falta por implementar')
+    filtro = {'_id': ObjectId(json['id_carrera'])}
+    remove = {'$pull': {'cursos': {'_id': ObjectId(json['id_curso'])}}}
+    return str(db.carreras.update_one(filtro, remove).modified_count)
 
 # -----------------Cursos-------------------------
+# db.carreras.update_one({'_id': ObjectId("5e3fb461b68af31c14553a1b")},  {'$pull': {'cursos': {'_id': ObjectId("5e3fb601b68af31114047388")}}).modified_count
 
 
 def crear_curso(json):
-    return str('Falta por implementar')
+    return str(db.cursos.insert_one(json).inserted_id)
 
 
 def consultar_curso_por_id(id_curso):
-    return str('Falta por implementar')
+    return dumps(db.cursos.find_one({'_id': ObjectId(id_curso)}))
 
 
 def actualizar_curso(curso):
     # Esta funcion solamente actualiza nombre, descripcion y clases del curso
-    return str('Falta por implementar')
+    return str(db.cursos.update_one({'_id': ObjectId(curso['id'])},
+                                    {'$set': {'nombre': curso['nombre'],
+                                              'description': curso['description'],
+                                              'clases': curso['clases']}}).modified_count)
 
 
 def borrar_curso_por_id(curso_id):
-    return str('Falta por implementar')
+    return str(db.cursos.delete_one({'_id': ObjectId(curso_id)}).deleted_count)
 
 
 def consultar_curso_por_id_proyeccion(id_curso, proyeccion=None):
-    return str('Falta por implementar')
+    return str(db.cursos.find_one({'_id': ObjectId(id_curso)}, proyeccion))
 
 
 def consultar_curso_por_nombre(nombre):
